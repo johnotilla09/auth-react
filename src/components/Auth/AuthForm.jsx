@@ -23,40 +23,51 @@ const AuthForm = () => {
         console.log("The password is" + enteredPassword);
 
         setIsLoading(true);
+        let url;
         if (isLogin) {
+            // This is for signing in for email and password
+            url =
+                "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBYU7KRGfUyscfv_KNOMt2utNvPZm1ClGU";
         } else {
             // send a request to signup
             // this is just like a try catch
-            fetch(
-                "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBYU7KRGfUyscfv_KNOMt2utNvPZm1ClGU",
-                {
-                    method: "POST",
-                    body: JSON.stringify({
-                        email: enteredEmail,
-                        password: enteredPassword,
-                        returnSecureToken: true,
-                    }),
-                    header: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            ).then((res) => {
+            url =
+                "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBYU7KRGfUyscfv_KNOMt2utNvPZm1ClGU";
+        }
+        fetch(url, {
+            method: "POST",
+            body: JSON.stringify({
+                email: enteredEmail,
+                password: enteredPassword,
+                returnSecureToken: true,
+            }),
+            header: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((res) => {
                 setIsLoading(false);
                 if (res.ok) {
                     // ...
-                    console.log(res);
+                    return res.json();
                 } else {
-                    res.json().then((data) => {
+                    return res.json().then((data) => {
                         // show and error modal
                         let errorMessage = "Authentication failed!";
                         if (data && data.error && data.error.message) {
                             errorMessage = data.error.message;
                         }
-                        alert(errorMessage);
+
+                        throw new Error(errorMessage);
                     });
                 }
+            })
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((err) => {
+                alert(err.message);
             });
-        }
     };
 
     return (
