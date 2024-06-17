@@ -25,9 +25,6 @@ const AuthForm = () => {
         const enteredEmail = emailInputRef.current.value;
         const enteredPassword = passwordInputRef.current.value;
 
-        console.log("The email is" + enteredEmail);
-        console.log("The password is" + enteredPassword);
-
         setIsLoading(true);
         let url;
         if (isLogin) {
@@ -70,7 +67,7 @@ const AuthForm = () => {
             })
             .then((data) => {
                 const expirationTime = new Date(
-                    new Date().getMinutes() + +data.expiresIn * 1000
+                    new Date().getTime() + +data.expiresIn * 1000
                 );
                 authCtx.login(data.idToken, expirationTime.toISOString());
 
